@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Köşe Kafe · Menü</title>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@500;700&family=Alegreya+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f5f0;--card:#fcfcf9;--ink:#1e2519;--muted:#6b7263;--line:#dcdfd2;--acc:#4a7425;--on:#fff;--ok:#4a7425}
+[data-theme=dark]{--bg:#11150e;--card:#181d14;--ink:#e9ecde;--muted:#98a089;--line:#2a3123;--acc:#8fb85a;--on:#10150b;--ok:#8fb85a}
+*{box-sizing:border-box;margin:0}
+body{font-family:"Alegreya Sans",system-ui,sans-serif;font-size:17px;background:var(--bg);color:var(--ink);padding-bottom:90px}
+h1,h2,h3{font-family:Alegreya,Georgia,serif}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.wrap{max-width:640px;margin:auto;padding:0 18px}
+
+header .top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 0 0}
+.brand{font-family:Alegreya,Georgia,serif;font-weight:700;font-size:1.15rem;letter-spacing:.01em}
+.tools{display:flex;gap:6px;align-items:center}
+.tools .pill{border:1px solid var(--line);background:none;border-radius:6px;padding:5px 10px;font-weight:500;font-size:.88rem;white-space:nowrap}
+
+.hero{padding:26px 0 18px}
+.hero h1{font-size:2.5rem;line-height:1;font-weight:700}
+.hero p{color:var(--muted);margin:8px 0 18px}
+.search{width:100%;padding:10px 2px;border:0;border-bottom:1px solid var(--ink);background:none;border-radius:0}
+.search:focus{outline:none;border-bottom-color:var(--acc);border-bottom-width:2px}
+
+.chips{position:sticky;top:0;z-index:5;display:flex;gap:20px;overflow-x:auto;background:var(--bg);border-bottom:1px solid var(--line);margin:0 -18px;padding:0 18px}
+.chips .pill{border:0;background:none;border-radius:0;padding:12px 0 10px;border-bottom:2px solid transparent;color:var(--muted);font-weight:500;white-space:nowrap}
+.chips .pill.on{color:var(--ink);border-bottom-color:var(--acc);background:none}
+
+.sh{font-size:1.5rem;font-weight:700;margin:30px 0 4px}
+.dish{display:block;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);padding:14px 0}
+.dn{display:flex;align-items:baseline}
+.nm{font-family:Alegreya,Georgia,serif;font-weight:700;font-size:1.22rem}
+.nm em{font-family:"Alegreya Sans",sans-serif;font-style:italic;font-weight:500;font-size:.85rem;color:var(--acc);margin-left:8px}
+.ld{flex:1;border-bottom:2px dotted var(--line);margin:0 8px;transform:translateY(-4px)}
+.pc{font-weight:700}
+.pl{color:var(--acc);font-size:1.3rem;line-height:1;margin-left:12px;font-weight:500}
+.ds{display:block;color:var(--muted);margin-top:2px;padding-right:30px}
+.empty{color:var(--muted);padding:40px 0;text-align:center}
+
+#bar{position:fixed;left:14px;right:14px;bottom:14px;max-width:612px;margin:auto;background:var(--ink);color:var(--bg);border:0;border-radius:8px;padding:15px 18px;display:flex;justify-content:space-between;font-weight:700}
+#bar[hidden]{display:none}
+
+dialog{border:0;border-radius:14px 14px 0 0;padding:0;width:min(520px,100%);max-height:88vh;background:var(--card);color:var(--ink);margin:auto auto 0;overflow:auto}
+@media(min-width:640px){dialog{margin:auto;border-radius:14px}}
+dialog::backdrop{background:rgba(10,14,8,.55)}
+.in{padding:22px}
+.in h2{font-size:1.7rem;line-height:1.1}
+.sec{margin-top:20px}
+.sec>b{display:block;margin-bottom:8px}
+.opt{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:8px;margin-bottom:6px;cursor:pointer}
+.opt:has(input:checked){border-color:var(--acc);background:color-mix(in srgb,var(--acc) 9%,transparent)}
+.opt input{accent-color:var(--acc);margin-right:10px}
+textarea,.in input[type=text]{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.q{display:inline-flex;align-items:center;gap:14px}
+.q button{width:32px;height:32px;border-radius:6px;border:1px solid var(--line);background:none}
+.cta{width:100%;margin-top:20px;padding:14px;border:0;border-radius:8px;background:var(--acc);color:var(--on);font-weight:700}
+.cta.ok{background:var(--ok)}
+.ln{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.ln small{color:var(--muted);display:block}
+.tot{display:flex;justify-content:space-between;font-size:1.25rem;font-weight:700;margin-top:16px}
+.x{float:right;border:0;background:none;font-size:1.7rem;line-height:1;color:var(--muted)}
+.big{display:flex;justify-content:center;color:var(--acc)}
+</style>
+</head>
+<body>
+<header><div class="wrap top">
+  <span class="brand" id="brand"></span>
+  <div class="tools">
+    <span class="pill" id="tbpill" hidden></span>
+    <button class="pill" data-lang aria-label="Language">TR / EN</button>
+    <button class="pill" data-theme aria-label="Theme">◐</button>
+  </div>
+</div></header>
+
+<div class="wrap">
+  <section class="hero">
+    <h1 id="hTitle"></h1>
+    <p id="hSub"></p>
+    <input class="search" id="search" type="search">
+  </section>
+  <div class="chips" id="chips"></div>
+  <main id="grid"></main>
+</div>
+
+<button id="bar" data-cart hidden><span id="bc"></span><span id="bt"></span></button>
+<dialog id="dp"></dialog>
+<dialog id="dc"></dialog>
+
+<script>
+// ====== AYARLAR: müşteriye göre burayı değiştir ======
+const CFG = { name: "Köşe Kafe", phone: "905551112233", cur: "₺" };
+
+const TXT = {
+  tr: { hero:"Menü", sub:"Sipariş vermek için bir ürüne dokun.", search:"Menüde ara…", all:"Tümü",
+    add:"Sepete ekle", cart:"Sepet", view:"Sepeti gör", empty:"Aradığın ürün bulunamadı.", emptyCart:"Sepetin boş.",
+    total:"Toplam", note:"Not (isteğe bağlı)", size:"Boy", extras:"Ekstralar", table:"Masa", tableNo:"Masa numarası",
+    send:"Siparişi WhatsApp ile gönder", done:"Siparişin iletildi!", no:"Sipariş no", newo:"Yeni sipariş",
+    pop:"Popüler", vegan:"Vegan", min:"dk", doneTxt:"WhatsApp açılmadıysa siparişini garsona söyleyebilirsin." },
+  en: { hero:"Menu", sub:"Tap an item to place your order.", search:"Search the menu…", all:"All",
+    add:"Add to cart", cart:"Cart", view:"View cart", empty:"No items found.", emptyCart:"Your cart is empty.",
+    total:"Total", note:"Note (optional)", size:"Size", extras:"Extras", table:"Table", tableNo:"Table number",
+    send:"Send order via WhatsApp", done:"Order sent!", no:"Order no", newo:"New order",
+    pop:"Popular", vegan:"Vegan", min:"min", doneTxt:"If WhatsApp didn't open, just tell your order to the waiter." }
+};
+
+const CATS = [
+  { id:"hot",     h:28,  n:{tr:"Sıcak içecekler", en:"Hot drinks"} },
+  { id:"cold",    h:200, n:{tr:"Soğuk içecekler", en:"Cold drinks"} },
+  { id:"dessert", h:330, n:{tr:"Tatlılar",        en:"Desserts"} },
+  { id:"snack",   h:150, n:{tr:"Atıştırmalık",    en:"Snacks"} }
+];
+const SIZES = [
+  { n:{tr:"Küçük", en:"Small"},  p:-10 },
+  { n:{tr:"Orta",  en:"Medium"}, p:0 },
+  { n:{tr:"Büyük", en:"Large"},  p:20 }
+];
+const DR = [
+  { n:{tr:"Ekstra shot",    en:"Extra shot"},    p:25 },
+  { n:{tr:"Yulaf sütü",     en:"Oat milk"},      p:20 },
+  { n:{tr:"Vanilya şurubu", en:"Vanilla syrup"}, p:15 }
+];
+const EXTRAS = {
+  hot:DR, cold:DR,
+  dessert:[{ n:{tr:"Dondurma topu", en:"Ice cream scoop"}, p:30 }, { n:{tr:"Ekstra sos", en:"Extra sauce"}, p:10 }],
+  snack:[{ n:{tr:"Ekstra peynir", en:"Extra cheese"}, p:20 }, { n:{tr:"Acı sos", en:"Hot sauce"}, p:0 }]
+};
+const ITEMS = [
+  { id:1,  cat:"hot",     e:"☕", n:{tr:"Türk Kahvesi", en:"Turkish Coffee"}, d:{tr:"Közde pişer, lokumla gelir", en:"Brewed on embers, served with delight"}, p:90,  min:6, tag:"pop" },
+  { id:2,  cat:"hot",     e:"🥛", n:{tr:"Latte", en:"Latte"}, d:{tr:"Çift shot espresso ve ipeksi süt", en:"Double espresso with silky milk"}, p:120, min:4, sz:1 },
+  { id:3,  cat:"hot",     e:"🍵", n:{tr:"Çay", en:"Tea"}, d:{tr:"İnce belli bardakta, taze demlenmiş", en:"Freshly brewed, in a tulip glass"}, p:35, min:2 },
+  { id:4,  cat:"cold",    e:"🧊", n:{tr:"Buzlu Americano", en:"Iced Americano"}, d:{tr:"Espresso, buz ve su", en:"Espresso, ice and water"}, p:105, min:3, sz:1 },
+  { id:5,  cat:"cold",    e:"🍋", n:{tr:"Limonata", en:"Lemonade"}, d:{tr:"Taze sıkılmış, nane ile", en:"Fresh squeezed, with mint"}, p:85, min:3, sz:1, tag:"vegan" },
+  { id:6,  cat:"cold",    e:"🥤", n:{tr:"Cold Brew", en:"Cold Brew"}, d:{tr:"18 saat soğuk demleme", en:"Steeped cold for 18 hours"}, p:115, min:2, sz:1, tag:"pop" },
+  { id:7,  cat:"dessert", e:"🍰", n:{tr:"San Sebastian", en:"San Sebastian Cheesecake"}, d:{tr:"Yanık yüzeyli, akışkan merkez", en:"Burnt top, creamy center"}, p:160, min:5, tag:"pop" },
+  { id:8,  cat:"dessert", e:"🥮", n:{tr:"Künefe", en:"Künefe"}, d:{tr:"Sıcak, bol fıstıklı", en:"Hot, with plenty of pistachio"}, p:180, min:12 },
+  { id:9,  cat:"snack",   e:"🥪", n:{tr:"Kaşarlı Sucuklu Tost", en:"Cheese & Sausage Toast"}, d:{tr:"Çıtır ekmek, bol kaşar", en:"Crispy bread, melted cheese"}, p:110, min:8 },
+  { id:10, cat:"snack",   e:"🥑", n:{tr:"Avokadolu Tost", en:"Avocado Toast"}, d:{tr:"Ekşi maya, yumurta, avokado", en:"Sourdough, egg, avocado"}, p:175, min:9, tag:"vegan" }
+];
+
+// ====== Yardımcılar ======
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const store = {
+  get(k, d) { try { const v = JSON.parse(localStorage.getItem(k)); return v ?? d; } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+};
+let lang  = store.get("lang", "tr");
+let theme = store.get("theme", matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+let cart  = store.get("cart", []);
+let tbl   = new URLSearchParams(location.search).get("masa") || store.get("tbl", "");
+let cat = "all", q = "", cur = null, done = null;
+
+const t = k => TXT[lang][k];
+const L = o => o[lang];
+const fmt = n => n.toLocaleString(lang === "tr" ? "tr-TR" : "en-US") + " " + CFG.cur;
+const sgn = p => p ? (p > 0 ? "+" : "") + fmt(p) : "";
+const item = id => ITEMS.find(i => i.id === id);
+const unit = l => {
+  const i = item(l.id);
+  return i.p + (i.sz ? SIZES[l.size].p : 0) + l.ex.reduce((a, k) => a + EXTRAS[i.cat][k].p, 0);
+};
+const cartSum = () => cart.reduce((a, l) => a + unit(l) * l.qty, 0);
+const cartCount = () => cart.reduce((a, l) => a + l.qty, 0);
+const desc = l => {
+  const i = item(l.id);
+  return [i.sz ? L(SIZES[l.size].n) : "", ...l.ex.map(k => L(EXTRAS[i.cat][k].n))].filter(Boolean).join(", ");
+};
+const saveCart = () => store.set("cart", cart);
+
+// ====== Ekran çizimi ======
+function renderChips() {
+  const all = [{ id:"all", n:{ tr:TXT.tr.all, en:TXT.en.all } }, ...CATS];
+  $("#chips").innerHTML = all.map(c =>
+    `<button class="pill ${cat === c.id ? "on" : ""}" data-cat="${c.id}">${L(c.n)}</button>`).join("");
+}
+
+function renderGrid() {
+  const needle = q.toLocaleLowerCase(lang);
+  const dish = i => `<button class="dish" data-open="${i.id}">
+      <span class="dn"><span class="nm">${L(i.n)}${i.tag ? `<em>${t(i.tag)}</em>` : ""}</span><i class="ld"></i><span class="pc">${fmt(i.p)}</span><span class="pl" aria-hidden="true">+</span></span>
+      <span class="ds">${L(i.d)}</span></button>`;
+  const html = CATS.filter(c => cat === "all" || c.id === cat).map(c => {
+    const list = ITEMS.filter(i => i.cat === c.id && L(i.n).toLocaleLowerCase(lang).includes(needle));
+    return list.length ? `<section><h2 class="sh">${L(c.n)}</h2>${list.map(dish).join("")}</section>` : "";
+  }).join("");
+  $("#grid").innerHTML = html || `<p class="empty">${t("empty")}</p>`;
+}
+
+function renderBar() {
+  const n = cartCount();
+  $("#bar").hidden = n === 0;
+  $("#bc").textContent = `${t("view")} (${n})`;
+  $("#bt").textContent = fmt(cartSum());
+}
+
+function renderProduct() {
+  const i = item(cur.id), ex = EXTRAS[i.cat];
+  $("#dp").innerHTML = `<div class="in">
+    <button class="x" data-close aria-label="Close">×</button>
+    <h2>${L(i.n)}</h2>
+    <p style="color:var(--muted);margin-top:4px">${L(i.d)} · ${i.min} ${t("min")}</p>
+    ${i.sz ? `<div class="sec"><b>${t("size")}</b>${SIZES.map((s, k) =>
+      `<label class="opt"><span><input type="radio" name="sz" value="${k}" ${cur.size === k ? "checked" : ""}>${L(s.n)}</span><span>${sgn(s.p)}</span></label>`).join("")}</div>` : ""}
+    <div class="sec"><b>${t("extras")}</b>${ex.map((e, k) =>
+      `<label class="opt"><span><input type="checkbox" value="${k}" ${cur.ex.includes(k) ? "checked" : ""}>${L(e.n)}</span><span>${sgn(e.p)}</span></label>`).join("")}</div>
+    <div class="sec"><textarea id="pn" rows="2" placeholder="${t("note")}">${esc(cur.note)}</textarea></div>
+    <div class="sec"><span class="q"><button data-qd aria-label="-">−</button><b>${cur.qty}</b><button data-qu aria-label="+">+</button></span></div>
+    <button class="cta" data-addcart>${t("add")} · ${fmt(unit(cur) * cur.qty)}</button>
+  </div>`;
+}
+
+function renderCart() {
+  const rows = cart.map((l, k) => `<div class="ln">
+      <div><b>${l.qty}× ${L(item(l.id).n)}</b><small>${esc(desc(l))}${l.note ? " · “" + esc(l.note) + "”" : ""}</small></div>
+      <div style="text-align:right"><b>${fmt(unit(l) * l.qty)}</b><br>
+        <span class="q" style="margin-top:6px"><button data-cd="${k}" aria-label="-">−</button><button data-cu="${k}" aria-label="+">+</button></span></div>
+    </div>`).join("");
+  $("#dc").innerHTML = `<div class="in"><button class="x" data-close aria-label="Close">×</button><h2>${t("cart")}</h2>` +
+    (cart.length
+      ? `${rows}<div class="tot"><span>${t("total")}</span><span>${fmt(cartSum())}</span></div>
+         <div class="sec"><b>${t("tableNo")}</b><input type="text" id="tb" inputmode="numeric" value="${esc(tbl)}"></div>
+         <button class="cta ok" data-send>${t("send")}</button>`
+      : `<p class="empty">${t("emptyCart")}</p>`) + `</div>`;
+}
+
+function renderDone() {
+  $("#dc").innerHTML = `<div class="in"><div class="big"><svg width="56" height="56" viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="28" cy="28" r="25"/><path d="M17 29l8 8 14-16"/></svg></div>
+    <h2 style="text-align:center;margin-top:12px">${t("done")}</h2>
+    <p style="text-align:center;margin-top:8px;color:var(--muted)">${t("no")}: <b style="color:var(--ink)">#${done}</b></p>
+    <p style="text-align:center;margin-top:8px;color:var(--muted)">${t("doneTxt")}</p>
+    <button class="cta" data-close>${t("newo")}</button></div>`;
+}
+
+function applyUI() {
+  document.documentElement.dataset.theme = theme;
+  document.documentElement.lang = lang;
+  $("#brand").textContent = CFG.name;
+  $("#hTitle").textContent = t("hero");
+  $("#hSub").textContent = t("sub");
+  $("#search").placeholder = t("search");
+  const pill = $("#tbpill");
+  pill.hidden = !tbl;
+  pill.textContent = `${t("table")} ${tbl}`;
+  renderChips(); renderGrid(); renderBar();
+  if ($("#dp").open) renderProduct();
+  if ($("#dc").open) (done ? renderDone() : renderCart());
+}
+
+// ====== Sepet işlemleri ======
+function addToCart() {
+  const i = item(cur.id);
+  const line = { id:cur.id, size:i.sz ? cur.size : 1, ex:[...cur.ex].sort(), qty:cur.qty, note:cur.note.trim() };
+  const key = l => JSON.stringify([l.id, l.size, l.ex, l.note]);
+  const same = cart.find(l => key(l) === key(line));
+  if (same) same.qty += line.qty; else cart.push(line);
+  saveCart(); renderBar();
+  $("#dp").close();
+}
+
+function change(k, d) {
+  cart[k].qty += d;
+  if (cart[k].qty <= 0) cart.splice(k, 1);
+  saveCart(); renderBar(); renderCart();
+}
+
+function send() {
+  tbl = $("#tb").value.trim(); store.set("tbl", tbl);
+  const no = Math.floor(100 + Math.random() * 900);
+  const lines = cart.map(l => {
+    const d = desc(l);
+    return `• ${l.qty}x ${L(item(l.id).n)}${d ? ` (${d})` : ""}${l.note ? ` – ${l.note}` : ""}`;
+  });
+  const msg = `${CFG.name} – ${t("no")} #${no}\n${t("table")}: ${tbl || "-"}\n\n${lines.join("\n")}\n\n${t("total")}: ${fmt(cartSum())}`;
+  window.open(`https://wa.me/${CFG.phone}?text=${encodeURIComponent(msg)}`, "_blank");
+  cart = []; saveCart(); done = no;
+  renderDone(); renderBar(); applyUI();
+}
+
+// ====== Olaylar ======
+document.addEventListener("click", e => {
+  // Sadece pencerenin dışındaki koyu alana tıklanınca kapat
+  if (e.target.tagName === "DIALOG") return e.target.close();
+  const el = e.target.closest("button");
+  if (!el) return;
+  const d = el.dataset;
+  if (d.cat) { cat = d.cat; renderChips(); renderGrid(); }
+  else if (d.open) { cur = { id:+d.open, size:1, ex:[], qty:1, note:"" }; renderProduct(); $("#dp").showModal(); }
+  else if (d.cart !== undefined) { done = null; renderCart(); $("#dc").showModal(); }
+  else if (d.close !== undefined) el.closest("dialog").close();
+  else if (d.qu !== undefined) { cur.qty++; renderProduct(); }
+  else if (d.qd !== undefined) { cur.qty = Math.max(1, cur.qty - 1); renderProduct(); }
+  else if (d.addcart !== undefined) addToCart();
+  else if (d.cu !== undefined) change(+d.cu, 1);
+  else if (d.cd !== undefined) change(+d.cd, -1);
+  else if (d.send !== undefined) send();
+  else if (d.lang !== undefined) { lang = lang === "tr" ? "en" : "tr"; store.set("lang", lang); applyUI(); }
+  else if (d.theme !== undefined) { theme = theme === "dark" ? "light" : "dark"; store.set("theme", theme); applyUI(); }
+});
+
+document.addEventListener("change", e => {
+  if (!cur || !$("#dp").open) return;
+  if (e.target.name === "sz") cur.size = +e.target.value;
+  else if (e.target.type === "checkbox") {
+    const k = +e.target.value;
+    cur.ex = e.target.checked ? [...cur.ex, k] : cur.ex.filter(x => x !== k);
+  } else return;
+  renderProduct();
+});
+
+document.addEventListener("input", e => {
+  if (e.target.id === "pn") cur.note = e.target.value;
+  if (e.target.id === "search") { q = e.target.value; renderGrid(); }
+});
+
+$("#dc").addEventListener("close", () => { done = null; });
+
+applyUI();
+</script>
+</body>
+</html>
