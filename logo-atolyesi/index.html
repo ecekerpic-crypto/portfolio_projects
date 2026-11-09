@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Logo Atölyesi</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Pacifico&family=Bebas+Neue&family=Montserrat:wght@700&family=Lobster&family=Oswald:wght@600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f3ef;--panel:#fff;--ink:#1d1b19;--mute:#6f6a63;--line:#ddd7cd;--acc:#8c2f1b;--accink:#fff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171513;--panel:#221f1c;--ink:#f1ece4;--mute:#a39b8f;--line:#3a352f;--acc:#e0875f;--accink:#1b120d}}
+:root[data-theme="dark"]{--bg:#171513;--panel:#221f1c;--ink:#f1ece4;--mute:#a39b8f;--line:#3a352f;--acc:#e0875f;--accink:#1b120d}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Montserrat",system-ui,sans-serif}
+.wrap{max-width:1080px;margin:0 auto;padding:24px 16px 48px}
+h1{font:700 28px/1.2 "Playfair Display",Georgia,serif;margin:0 0 4px}
+p.sub{color:var(--mute);margin:0 0 20px}
+.search{display:flex;gap:8px}
+input[type=text],select{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);font:inherit}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:10px;padding:10px 16px}
+button.pri{background:var(--acc);color:var(--accink);border-color:var(--acc);font-weight:700}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 22px}
+.chips button{padding:6px 12px;border-radius:99px;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.card{padding:0;overflow:hidden;text-align:left}
+.card svg{display:block;width:100%;height:auto}
+.card span{display:block;padding:8px 12px;font-size:12px;color:var(--mute);border-top:1px solid var(--line)}
+.card:hover{border-color:var(--acc)}
+.editor{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:20px;align-items:start}
+@media(max-width:800px){.editor{grid-template-columns:1fr}}
+.prev{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px;position:sticky;top:8px}
+.prev svg{width:100%;height:auto;display:block;border-radius:8px}
+.ctl{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
+.ctl label{display:block;font-size:13px;color:var(--mute);margin:12px 0 4px}
+.ctl label:first-child{margin-top:0}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.row>*{flex:1;min-width:90px}
+input[type=color]{width:100%;height:40px;padding:2px;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
+input[type=range]{width:100%;accent-color:var(--acc)}
+.icons{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.icons button{padding:6px;aspect-ratio:1}
+.icons button.on,.seg button.on{border-color:var(--acc);box-shadow:0 0 0 2px var(--acc) inset}
+.icons svg{width:100%;height:100%;display:block}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{padding:7px 12px;font-size:13px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:8px;flex-wrap:wrap}
+.wrap h2{font:700 20px "Playfair Display",Georgia,serif;margin:0 0 12px}
+.hide{display:none}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+</head>
+<body>
+<div class="wrap">
+ <div style="text-align:end;margin-bottom:8px"><select id="lang" style="width:auto" aria-label="Language"><option value="tr">Türkçe</option><option value="en">English</option><option value="de">Deutsch</option><option value="ar">العربية</option><option value="fr">Français</option><option value="es">Español</option><option value="ru">Русский</option></select></div>
+ <section id="home">
+  <h1>Logo Atölyesi</h1>
+  <p class="sub">Aradığın logo türünü yaz, taslakları gör, beğendiğini istediğin gibi düzenle.</p>
+  <div class="search"><input id="q" type="text" placeholder="Örn: restoran, kafe, pizza, balık, kebap…" aria-label="Logo ara"><button class="pri" id="go">Ara</button></div>
+  <div class="chips" id="chips"></div>
+  <div id="resHead" class="sub"></div>
+  <div class="grid" id="res"></div>
+  <div id="saved" style="margin-top:36px"></div>
+ </section>
+ <section id="edit" class="hide">
+  <div class="top"><button id="back">Taslaklara dön</button><div class="row" style="flex:none"><button id="sv">Kaydet</button><button id="shuf">Rastgele stil</button><button id="dmk">Önizlemeyi indir (PNG)</button><button id="dsvg">SVG indir</button><button class="pri" id="dpng">PNG indir</button></div></div>
+  <div class="editor">
+   <div class="prev"><div class="seg" id="views" style="margin-bottom:10px"></div><div id="prev"></div></div>
+   <div class="ctl hide" id="menuCtl"><label>Menü başlığı<input data-mn="t" type="text"></label><label>Menü satırları (Ad ; Fiyat ; Açıklama)<textarea data-mn="l" rows="7" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);font:inherit"></textarea></label><p style="font-size:13px;color:var(--mute);margin:8px 0 0">Her satır bir yemek, en fazla 6 satır. Boş bırakırsan örnek çizgiler görünür.</p></div><div class="ctl hide" id="socialCtl"><label>Sosyal medya boyutları</label><button id="sp" style="width:100%;margin-top:8px">Profil görseli (1080×1080) indir</button><button id="sc" style="width:100%;margin-top:8px">Kapak görseli (1640×624) indir</button><button id="ss" style="width:100%;margin-top:8px">Hikâye görseli (1080×1920) indir</button></div><div class="ctl hide" id="cardCtl"><label>Kartvizit bilgileri</label><label>Ad Soyad<input data-cd="person" type="text"></label><label>Unvan<input data-cd="title" type="text"></label><label>Telefon<input data-cd="phone" type="text"></label><label>E-posta<input data-cd="email" type="text"></label><label>Web sitesi<input data-cd="web" type="text"></label><label>Adres<input data-cd="addr" type="text"></label><label><input type="checkbox" data-cd="qr"> QR kod ekle</label><label>QR içeriği (boşsa web sitesi)<input data-cd="qrt" type="text"></label><label><input type="checkbox" data-cd="inv"> Arka yüz renklerini ters çevir</label><button id="cboth" class="pri" style="margin-top:14px;width:100%">Kartviziti indir (ön + arka)</button><div class="row" style="margin-top:10px"><button id="cf">Ön yüzü indir (PNG)</button><button id="cbk">Arka yüzü indir (PNG)</button></div><button id="cb" style="margin-top:10px;width:100%">Logo düzenlemeye dön</button></div><div class="ctl" id="logoCtl">
+    <label for="name">Marka adı</label><input id="name" type="text">
+    <label for="slogan">Slogan</label><input id="slogan" type="text"><label for="yr">Kuruluş yılı (boş bırakılabilir)</label><input id="yr" type="text" maxlength="6">
+    <label>Simge</label><div class="icons" id="icons"></div><div class="row" style="margin-top:8px"><button id="imgb">Kendi görselini yükle</button><button id="imgx">Görseli kaldır</button><input type="file" id="imgf" accept="image/*" hidden></div>
+    <label>Yerleşim</label><div class="seg" id="layout"></div>
+    <label>Çerçeve</label><div class="seg" id="frame"></div>
+    <label for="font">Yazı tipi</label><select id="font"></select><button id="fontb" style="margin-top:8px;width:100%">Kendi yazı tipini yükle (.ttf .otf .woff)</button><input type="file" id="fontf" accept=".ttf,.otf,.woff,.woff2" hidden>
+    <div class="row">
+     <div><label for="c1">Ana renk</label><input type="color" id="c1"></div>
+     <div><label for="c2">Vurgu</label><input type="color" id="c2"></div>
+     <div><label for="bg">Zemin</label><input type="color" id="bg"></div>
+    </div>
+    <label for="is">Simge boyutu</label><input type="range" id="is" min="0.5" max="1.5" step="0.05">
+    <label for="ls">Harf aralığı</label><input type="range" id="ls" min="0" max="12" step="0.5">
+    <label><input type="checkbox" id="up"> Büyük harf</label><label><input type="checkbox" id="tr"> Şeffaf zemin (indirirken)</label><label><input type="checkbox" id="tx"> Elle basılmış doku (köşeler hafif bozuk)</label>
+   </div>
+  </div>
+ </section>
+</div>
+<script>
+const I={
+chef:'<path fill="{C}" d="M14 30h20v9a2 2 0 0 1-2 2H16a2 2 0 0 1-2-2z"/><path fill="{C}" d="M14 28a7 7 0 0 1 2-13 8 8 0 0 1 16 0 7 7 0 0 1 2 13z"/><rect x="14" y="30" width="20" height="2.5" fill="{A}"/>',
+fork:'<path fill="{C}" d="M10 6v12a4 4 0 0 0 3 4v20h3V22a4 4 0 0 0 3-4V6h-2v10h-2V6h-2v10h-2V6z"/><path fill="{A}" d="M34 6c-4 3-6 8-6 14h5v22h3V6z"/>',
+pizza:'<path fill="{C}" d="M24 43L7 13a38 38 0 0 1 34 0z"/><circle cx="20" cy="20" r="3" fill="{A}"/><circle cx="28" cy="24" r="3" fill="{A}"/><circle cx="23" cy="31" r="2.5" fill="{A}"/>',
+burger:'<path fill="{C}" d="M8 22a16 14 0 0 1 32 0z"/><rect x="7" y="25" width="34" height="4" rx="2" fill="{A}"/><path fill="{C}" d="M8 32h32a8 8 0 0 1-8 8H16a8 8 0 0 1-8-8z"/>',
+coffee:'<path fill="{C}" d="M9 18h24v12a10 10 0 0 1-10 10h-4A10 10 0 0 1 9 30z"/><path d="M33 21h3a5 5 0 0 1 0 10h-3" fill="none" stroke="{C}" stroke-width="3"/><path d="M16 6c-2 3 2 4 0 8M23 6c-2 3 2 4 0 8" stroke="{A}" stroke-width="2.5" fill="none" stroke-linecap="round"/>',
+fish:'<path fill="{C}" d="M4 24c8-12 22-12 30 0-8 12-22 12-30 0z"/><path fill="{C}" d="M32 24l12-10v20z"/><circle cx="14" cy="22" r="2" fill="{A}"/>',
+flame:'<path fill="{C}" d="M24 4c2 8 12 12 12 24a12 12 0 0 1-24 0c0-6 4-8 5-14 3 2 4 5 4 8 3-4 4-10 3-18z"/><path fill="{A}" d="M24 42a6 6 0 0 1-6-6c0-4 4-6 6-10 2 4 6 6 6 10a6 6 0 0 1-6 6z"/>',
+bread:'<path fill="{C}" d="M8 20a10 8 0 0 1 8-10h16a10 8 0 0 1 8 10c0 3-2 4-3 4v14a2 2 0 0 1-2 2H13a2 2 0 0 1-2-2V24c-1 0-3-1-3-4z"/><path d="M18 18l-2 8M25 18l-2 8M32 18l-2 8" stroke="{A}" stroke-width="2.5" stroke-linecap="round"/>',
+wine:'<path fill="{C}" d="M14 5h20c1 12-3 19-10 19S13 17 14 5z"/><rect x="22.5" y="24" width="3" height="14" fill="{C}"/><rect x="15" y="38" width="18" height="3" rx="1.5" fill="{C}"/><path d="M15 12h18" stroke="{A}" stroke-width="2.5"/>',
+leaf:'<path fill="{C}" d="M40 6C16 6 8 18 8 30c0 4 2 7 4 9 2-12 10-20 20-24-8 6-14 14-16 26 16 2 24-12 24-35z"/>',
+icecream:'<path fill="{A}" d="M15 24h18L24 44z"/><circle cx="24" cy="16" r="10" fill="{C}"/>',
+sushi:'<ellipse cx="24" cy="30" rx="15" ry="9" fill="{C}"/><path fill="{A}" d="M9 26c4-10 26-10 30 0-8 6-22 6-30 0z"/>'
+};
+const CATS=[
+{k:['restoran','restaurant','lokanta','yemek','food'],i:['chef','fork','flame','wine','leaf','bread'],l:'Restoran'},
+{k:['kafe','cafe','kahve','coffee','çay'],i:['coffee','leaf','bread','icecream'],l:'Kafe'},
+{k:['pizza','pizzeria'],i:['pizza','flame','chef','leaf'],l:'Pizza'},
+{k:['burger','hamburger'],i:['burger','flame','fork','chef'],l:'Burger'},
+{k:['balık','balik','deniz','fish','seafood'],i:['fish','wine','leaf','chef'],l:'Balık'},
+{k:['kebap','kebab','mangal','et','steak','ocakbaşı','ocakbasi'],i:['flame','fork','chef','wine'],l:'Kebap & Mangal'},
+{k:['fırın','firin','pastane','bakery','ekmek','tatlı'],i:['bread','icecream','chef','coffee'],l:'Fırın & Pastane'},
+{k:['sushi','japon','asya'],i:['sushi','fish','leaf','chef'],l:'Sushi'},
+{k:['dondurma','ice cream'],i:['icecream','coffee','leaf'],l:'Dondurma'},
+{k:['bar','şarap','sarap','wine','pub'],i:['wine','fork','leaf','flame'],l:'Bar & Şarap'}
+];
+const FONTS={'Playfair Display':"'Playfair Display',Georgia,serif",'Pacifico':"'Pacifico',cursive",'Bebas Neue':"'Bebas Neue',Impact,sans-serif",'Montserrat':"'Montserrat',Arial,sans-serif",'Lobster':"'Lobster',cursive",'Oswald':"'Oswald',Arial,sans-serif"};
+const FN=Object.keys(FONTS);
+const PAL=[['#7a1f1f','#e0a458','#fbf3e4'],['#1f3d2b','#d9a441','#f6f1e3'],['#1a1a1a','#e63946','#ffffff'],['#0b3c5d','#f2b134','#f4f8fb'],['#ffffff','#f4b942','#2b2118'],['#c0392b','#2c3e50','#fff7ec'],['#2d2a26','#c8a165','#efe6d6'],['#e76f51','#264653','#fdf6ec']];
+const FR=['circle','none','rounded','ring'];
+const LAY={badge:'Rozet (yay yazı)',stack:'Üstte simge',row:'Yanda simge',mono:'Monogram',word:'Yazı logosu'};
+const FRN={none:'Yok',circle:'Daire',rounded:'Yuvarlak kutu',ring:'Halka'};
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const icon=(n,C,A)=>I[n].replace(/\{C\}/g,C).replace(/\{A\}/g,A);
+
+const CF={};
+const LO=['badge','stack','word','mono','row','badge','word','stack'];
+const filt=s=>s.tx?'<defs><filter id="ink" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".045" numOctaves="3" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.2"/></filter></defs>':'';
+const wrap=(s,i)=>`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">${fontCss(s)}${filt(s)}${s.tr?'':`<rect width="400" height="400" fill="${s.bg}"/>`}<g ${s.tx?'filter="url(#ink)"':''}>${i}</g></svg>`;
+const T=(x,y,sz,ls,fill,t,f)=>`<text x="${x}" y="${y}" text-anchor="middle" font-family="${f||'Montserrat,Arial,sans-serif'}" font-size="${sz}" letter-spacing="${ls}" fill="${fill}">${t}</text>`;
+const LX={
+badge:s=>{const solid=s.frame==='circle'||s.frame==='rounded',ink=solid?s.bg:s.c1,ac=solid?s.bg:s.c2,f=FONTS[s.font],n=esc(s.up?s.name.toUpperCase():s.name),L=Math.max(s.name.length,3),fs=Math.min(46,330/(L*.62)),
+ base=solid?`<circle cx="200" cy="200" r="185" fill="${s.c1}"/><circle cx="200" cy="200" r="170" fill="none" stroke="${s.bg}" stroke-width="2"/>`:`<circle cx="200" cy="200" r="184" fill="none" stroke="${s.c1}" stroke-width="9"/><circle cx="200" cy="200" r="168" fill="none" stroke="${s.c2}" stroke-width="2"/>`;
+ return wrap(s,base+`<defs><path id="at" d="M72 200A128 128 0 0 1 328 200"/><path id="ab" d="M52 200A148 148 0 0 0 348 200"/></defs><text font-family="${f}" font-size="${fs}" letter-spacing="${s.ls}" fill="${ink}" text-anchor="middle"><textPath href="#at" startOffset="50%">${n}</textPath></text>`+(s.slogan?`<text font-family="Montserrat,Arial,sans-serif" font-size="13" letter-spacing="4" fill="${ac}" text-anchor="middle"><textPath href="#ab" startOffset="50%">${esc(s.slogan.toUpperCase())}</textPath></text>`:'')+ic(s,200,s.yr?188:200,92*s.is,ink,ac)+(s.yr?T(200,264,12,3,ac,'EST. '+esc(s.yr)):'')+`<circle cx="46" cy="200" r="3.5" fill="${ac}"/><circle cx="354" cy="200" r="3.5" fill="${ac}"/>`)},
+mono:s=>{const f=FONTS[s.font],sol=s.frame==='circle'||s.frame==='rounded',ink=s.c1,ac=s.c2,n=esc(s.up?s.name.toUpperCase():s.name),L=Math.max(s.name.length,3),fs=Math.min(40,330/(L*.62)),ch=esc((s.name.trim()[0]||'A').toLocaleUpperCase('tr'));
+ return wrap(s,`<circle cx="200" cy="140" r="96" fill="${sol?ink:'none'}" stroke="${ink}" stroke-width="6"/><circle cx="200" cy="140" r="84" fill="none" stroke="${sol?s.bg:ac}" stroke-width="2"/>`+(s.img?ic(s,200,140,120*s.is,ink,ac):T(200,140+.36*110*s.is,110*s.is,0,sol?s.bg:ink,ch,FONTS[s.font]))+T(200,292,fs,s.ls+2,ink,n,f)+(s.slogan?T(200,320,13,4,ac,esc(s.slogan.toUpperCase())):'')+(s.yr?`<line x1="70" y1="350" x2="150" y2="350" stroke="${ac}" stroke-width="2"/><line x1="250" y1="350" x2="330" y2="350" stroke="${ac}" stroke-width="2"/>`+T(200,355,12,3,ink,'EST. '+esc(s.yr)):''))},
+word:s=>{const f=FONTS[s.font],ink=s.c1,ac=s.c2,n=esc(s.up?s.name.toUpperCase():s.name),L=Math.max(s.name.length,3),fs=Math.min(76,340/(L*.55));
+ return wrap(s,`<line x1="58" y1="116" x2="160" y2="116" stroke="${ink}" stroke-width="2"/><line x1="240" y1="116" x2="342" y2="116" stroke="${ink}" stroke-width="2"/>`+ic(s,200,116,54*s.is,ink,ac)+T(200,214,fs,s.ls,ink,n,f)+`<line x1="80" y1="246" x2="320" y2="246" stroke="${ac}" stroke-width="2.5"/><line x1="80" y1="252" x2="320" y2="252" stroke="${ink}" stroke-width="1"/>`+(s.slogan?T(200,284,15,4,ink,esc(s.slogan.toUpperCase())):'')+(s.yr?T(200,314,12,3,ac,'EST. '+esc(s.yr)):''))}
+};
+function fontCss(s){return CF[s.font]?`<defs><style>@font-face{font-family:'${s.font}';src:url(${CF[s.font]})}</style></defs>`:''}
+function ic(s,cx,cy,sz,ink,acc){if(s.img)return `<image href="${s.img}" x="${cx-sz/2}" y="${cy-sz/2}" width="${sz}" height="${sz}" preserveAspectRatio="xMidYMid meet"/>`;const k=sz/48;return `<g transform="translate(${cx-24*k},${cy-24*k}) scale(${k})">${icon(s.icon,ink,acc)}</g>`}
+function render(s){if(LX[s.layout])return LX[s.layout](s);
+ const solid=s.frame==='circle'||s.frame==='rounded';
+ const ink=solid?s.bg:s.c1, acc=s.c2;
+ const row=s.layout==='row';
+ let o=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">${fontCss(s)}${filt(s)}${s.tr?'':`<rect width="400" height="400" fill="${s.bg}"/>`}<g ${s.tx?'filter="url(#ink)"':''}>`;
+ const fill=solid?s.c1:'none';
+ if(s.frame==='circle'&&!row)o+=`<circle cx="200" cy="200" r="185" fill="${s.c1}"/>`;
+ else if(s.frame==='ring'&&!row)o+=`<circle cx="200" cy="200" r="182" fill="none" stroke="${s.c1}" stroke-width="8"/><circle cx="200" cy="200" r="168" fill="none" stroke="${s.c2}" stroke-width="2"/>`;
+ else if(s.frame!=='none'){
+  const r=s.frame==='ring'?'fill="none" stroke="'+s.c1+'" stroke-width="8"':'fill="'+s.c1+'"';
+  o+=row?`<rect x="14" y="105" width="372" height="190" rx="34" ${r}/>`:`<rect x="20" y="20" width="360" height="360" rx="44" ${r}/>`;
+ }
+ const name=s.up?s.name.toUpperCase():s.name, len=Math.max(name.length,3);
+ const ff=FONTS[s.font];
+ if(!row){
+  o+=ic(s,200,118,110*s.is,ink,acc);
+  const fs=Math.min(58,300/(len*.55));
+  o+=`<text x="200" y="238" text-anchor="middle" font-family="${ff}" font-size="${fs}" letter-spacing="${s.ls}" fill="${ink}">${esc(name)}</text>`;
+  if(s.slogan)o+=`<text x="200" y="272" text-anchor="middle" font-family="Montserrat,Arial,sans-serif" font-size="14" letter-spacing="3" fill="${solid?s.bg:s.c2}" ${solid?'opacity=".85"':''}>${esc(s.slogan.toUpperCase())}</text>`;
+ }else{
+  o+=ic(s,88,200,100*s.is,ink,acc);
+  const fs=Math.min(46,200/(len*.55));
+  o+=`<text x="160" y="${s.slogan?198:212}" font-family="${ff}" font-size="${fs}" letter-spacing="${s.ls}" fill="${ink}">${esc(name)}</text>`;
+  if(s.slogan)o+=`<text x="160" y="228" font-family="Montserrat,Arial,sans-serif" font-size="11" letter-spacing="2.5" fill="${solid?s.bg:s.c2}">${esc(s.slogan.toUpperCase())}</text>`;
+ }
+ return o+'</g></svg>';
+}
+
+function match(q){
+ q=q.toLocaleLowerCase('tr').trim();
+ return CATS.find(c=>c.k.some(w=>q.includes(w)||(q.length>2&&w.includes(q))))||CATS[0];
+}
+function drafts(q,cat){
+ const nm=q&&!CATS.some(c=>c.k.includes(q.toLocaleLowerCase('tr').trim()))?q:L(cat.l);
+ const base=nm.charAt(0).toLocaleUpperCase('tr')+nm.slice(1);
+ return Array.from({length:8},(_,i)=>{
+  const p=PAL[i],layout=LO[i];
+  return {name:base,slogan:L('Lezzetin adresi'),icon:cat.i[i%cat.i.length],layout,frame:FR[i%4],font:FN[i%FN.length],c1:p[0],c2:p[1],bg:p[2],is:1,ls:1,up:i%3===0,yr:'2024',tx:i%2===0};
+ });
+}
+
+let S=null;
+const $=id=>document.getElementById(id);
+function search(){
+ const q=$('q').value, cat=match(q);
+ $('resHead').textContent=L('“%s” için 8 taslak — birini seçip düzenle.').replace('%s',L(cat.l));
+ $('res').innerHTML='';
+ drafts(q,cat).forEach((d,i)=>{
+  const b=document.createElement('button');b.className='card';
+  b.innerHTML=render(d)+`<span>${L('Taslak')} ${i+1} · ${L(LAY[d.layout])}</span>`;
+  b.onclick=()=>openEditor(d);
+  $('res').appendChild(b);
+ });
+}
+function openEditor(d){
+ S={...d};S.mn=d.mn||{t:'',l:''};S.cd=d.cd||{person:L('Ad Soyad'),title:L('Unvan'),phone:'0 (500) 000 00 00',email:'info@ornek.com',web:'www.ornek.com',addr:L('Örnek Mah. No:1'),inv:false,qr:false,qrt:''};
+ $('home').classList.add('hide');$('edit').classList.remove('hide');
+ for(const k of ['name','slogan','yr','font','c1','c2','bg','is','ls'])$(k).value=S[k]||'';
+ $('up').checked=S.up;$('tr').checked=!!S.tr;$('tx').checked=!!S.tx;fillMenu();V='logo';
+ build();update();window.scrollTo(0,0);
+}
+function build(){
+ $('icons').innerHTML='';
+ Object.keys(I).forEach(n=>{
+  const b=document.createElement('button');b.title=n;b.dataset.n=n;
+  b.innerHTML=`<svg viewBox="0 0 48 48">${icon(n,'#888','#bbb')}</svg>`;
+  b.onclick=()=>{S.icon=n;update()};$('icons').appendChild(b);
+ });
+ const seg=(id,obj,key)=>{
+  $(id).innerHTML='';
+  Object.entries(obj).forEach(([v,l])=>{const b=document.createElement('button');b.textContent=L(l);b.dataset.v=v;b.onclick=()=>{S[key]=v;update()};$(id).appendChild(b)});
+ };
+ seg('layout',LAY,'layout');seg('frame',FRN,'frame');
+ $('views').innerHTML='';Object.entries(VN).forEach(([v,l])=>{const b=document.createElement('button');b.textContent=L(l);b.dataset.v=v;b.onclick=()=>{V=v;update()};$('views').appendChild(b)});
+ $('font').innerHTML=FN.map(f=>`<option>${f}</option>`).join('');$('font').value=S.font;
+}
+let lang='tr',CE=false;
+const TX={
+'Logo Atölyesi':['Logo Studio','Logo-Atelier','ورشة الشعارات'],
+'Aradığın logo türünü yaz, taslakları gör, beğendiğini istediğin gibi düzenle.':['Type a logo category, browse drafts, and edit your favorite.','Logo-Kategorie eingeben, Entwürfe ansehen und den Favoriten anpassen.','اكتب نوع الشعار، تصفح المسودات وعدّل المفضلة لديك.'],
+'Ara':['Search','Suchen','بحث'],
+'Örn: restoran, kafe, pizza, balık, kebap…':['e.g. restaurant, cafe, pizza, fish, kebab…','z. B. Restaurant, Café, Pizza, Fisch, Kebab…','مثال: مطعم، مقهى، بيتزا، سمك، كباب…'],
+'Taslaklara dön':['Back to drafts','Zurück zu Entwürfen','العودة للمسودات'],
+'Rastgele stil':['Shuffle style','Zufälliger Stil','نمط عشوائي'],
+'SVG indir':['Download SVG','SVG laden','تنزيل SVG'],
+'PNG indir':['Download PNG','PNG laden','تنزيل PNG'],
+'Marka adı':['Brand name','Markenname','اسم العلامة'],
+'Slogan':['Slogan','Slogan','الشعار النصي'],
+'Kuruluş yılı (boş bırakılabilir)':['Founded (optional)','Gründungsjahr (optional)','سنة التأسيس (اختياري)'],
+'Simge':['Icon','Symbol','الرمز'],
+'Kendi görselini yükle':['Upload your image','Eigenes Bild hochladen','ارفع صورتك'],
+'Görseli kaldır':['Remove image','Bild entfernen','إزالة الصورة'],
+'Yerleşim':['Layout','Layout','التخطيط'],
+'Çerçeve':['Frame','Rahmen','الإطار'],
+'Yazı tipi':['Font','Schriftart','الخط'],
+'Kendi yazı tipini yükle (.ttf .otf .woff)':['Upload your font (.ttf .otf .woff)','Eigene Schrift hochladen (.ttf .otf .woff)','ارفع خطك (.ttf .otf .woff)'],
+'Ana renk':['Main color','Hauptfarbe','اللون الأساسي'],
+'Vurgu':['Accent','Akzent','اللون الثانوي'],
+'Zemin':['Background','Hintergrund','الخلفية'],
+'Simge boyutu':['Icon size','Symbolgröße','حجم الرمز'],
+'Harf aralığı':['Letter spacing','Buchstabenabstand','تباعد الحروف'],
+'Büyük harf':['Uppercase','Großbuchstaben','أحرف كبيرة'],
+'Şeffaf zemin (indirirken)':['Transparent background (on download)','Transparenter Hintergrund (beim Download)','خلفية شفافة (عند التنزيل)'],
+'Elle basılmış doku (köşeler hafif bozuk)':['Hand-printed texture (slightly rough edges)','Handgedruckte Textur (leicht raue Kanten)','ملمس مطبوع يدويًا (حواف خشنة قليلًا)'],
+'Rozet (yay yazı)':['Badge (curved text)','Siegel (Bogentext)','شارة (نص منحنٍ)'],
+'Üstte simge':['Icon on top','Symbol oben','الرمز في الأعلى'],
+'Yanda simge':['Icon beside','Symbol seitlich','الرمز بالجانب'],
+'Monogram':['Monogram','Monogramm','حرف أول'],
+'Yazı logosu':['Wordmark','Wortmarke','شعار نصي'],
+'Yok':['None','Keiner','بدون'],'Daire':['Circle','Kreis','دائرة'],'Yuvarlak kutu':['Rounded box','Abgerundetes Feld','مربع مستدير'],'Halka':['Ring','Ring','حلقة'],
+'Logo':['Logo','Logo','الشعار'],'Kartvizit':['Business card','Visitenkarte','بطاقة عمل'],'Tabela':['Sign','Schild','لافتة'],
+'Restoran':['Restaurant','Restaurant','مطعم'],'Kafe':['Café','Café','مقهى'],'Pizza':['Pizza','Pizza','بيتزا'],'Burger':['Burger','Burger','برغر'],'Balık':['Fish','Fisch','سمك'],'Kebap & Mangal':['Kebab & Grill','Kebab & Grill','كباب وشواء'],'Fırın & Pastane':['Bakery','Bäckerei','مخبز وحلويات'],'Sushi':['Sushi','Sushi','سوشي'],'Dondurma':['Ice cream','Eis','بوظة'],'Bar & Şarap':['Bar & Wine','Bar & Wein','بار ونبيذ'],
+'Lezzetin adresi':['The address of taste','Die Adresse für Genuss','عنوان النكهة'],
+'Taslak':['Draft','Entwurf','مسودة'],
+'“%s” için 8 taslak — birini seçip düzenle.':['8 drafts for “%s” — pick one to edit.','8 Entwürfe für „%s“ – wähle einen zum Bearbeiten.','8 مسودات لـ «%s» — اختر واحدة للتعديل.'],
+'Kartvizit bilgileri':['Card details','Kartendaten','بيانات البطاقة'],'Ad Soyad':['Full name','Vor- und Nachname','الاسم الكامل'],'Unvan':['Title','Position','المسمى'],'Telefon':['Phone','Telefon','الهاتف'],'E-posta':['Email','E-Mail','البريد'],'Web sitesi':['Website','Webseite','الموقع'],'Adres':['Address','Adresse','العنوان'],
+'Arka yüz renklerini ters çevir':['Invert back colors','Rückseitenfarben umkehren','عكس ألوان الخلف'],
+'Ön yüzü indir (PNG)':['Download front (PNG)','Vorderseite laden (PNG)','تنزيل الوجه الأمامي (PNG)'],
+'Arka yüzü indir (PNG)':['Download back (PNG)','Rückseite laden (PNG)','تنزيل الوجه الخلفي (PNG)'],
+'Logo düzenlemeye dön':['Back to logo editing','Zurück zur Logo-Bearbeitung','العودة لتعديل الشعار'],
+'Düzenlemek için karta dokun':['Tap a card to edit it','Karte antippen zum Bearbeiten','المس البطاقة للتعديل'],
+'Örnek Mah. No:1':['Sample St. 1','Musterstr. 1','شارع المثال 1']
+};
+const K=Object.keys(TX);
+const TY={
+fr:['Atelier de logos','Saisissez un type de logo, parcourez les ébauches et modifiez votre favori.','Rechercher','ex. restaurant, café, pizza, poisson, kebab…','Retour aux ébauches','Style aléatoire','Télécharger SVG','Télécharger PNG','Nom de la marque','Slogan','Année de fondation (facultatif)','Icône','Importer votre image','Retirer l’image','Disposition','Cadre','Police','Importer votre police (.ttf .otf .woff)','Couleur principale','Accent','Fond','Taille de l’icône','Espacement des lettres','Majuscules','Fond transparent (au téléchargement)','Texture imprimée à la main (bords légèrement irréguliers)','Écusson (texte courbé)','Icône au-dessus','Icône à côté','Monogramme','Logotype','Aucun','Cercle','Boîte arrondie','Anneau','Logo','Carte de visite','Enseigne','Restaurant','Café','Pizza','Burger','Poisson','Kebab & grill','Boulangerie','Sushi','Glace','Bar & vin','L’adresse du goût','Ébauche','8 ébauches pour « %s » — choisissez-en une à modifier.','Détails de la carte','Nom complet','Titre','Téléphone','E-mail','Site web','Adresse','Inverser les couleurs du verso','Télécharger le recto (PNG)','Télécharger le verso (PNG)','Retour à la modification du logo','Touchez une carte pour la modifier','Rue Exemple 1'],
+es:['Taller de logos','Escribe un tipo de logo, explora los borradores y edita tu favorito.','Buscar','p. ej. restaurante, café, pizza, pescado, kebab…','Volver a los borradores','Estilo aleatorio','Descargar SVG','Descargar PNG','Nombre de la marca','Eslogan','Año de fundación (opcional)','Icono','Subir tu imagen','Quitar imagen','Diseño','Marco','Fuente','Subir tu fuente (.ttf .otf .woff)','Color principal','Acento','Fondo','Tamaño del icono','Espaciado de letras','Mayúsculas','Fondo transparente (al descargar)','Textura impresa a mano (bordes ligeramente irregulares)','Insignia (texto curvo)','Icono arriba','Icono al lado','Monograma','Logotipo tipográfico','Ninguno','Círculo','Caja redondeada','Anillo','Logo','Tarjeta de visita','Letrero','Restaurante','Café','Pizza','Hamburguesa','Pescado','Kebab y parrilla','Panadería','Sushi','Helado','Bar y vino','La dirección del sabor','Borrador','8 borradores para «%s»: elige uno para editar.','Datos de la tarjeta','Nombre completo','Cargo','Teléfono','Correo','Sitio web','Dirección','Invertir colores del reverso','Descargar anverso (PNG)','Descargar reverso (PNG)','Volver a editar el logo','Toca una tarjeta para editarla','Calle Ejemplo 1'],
+ru:['Студия логотипов','Введите тип логотипа, просмотрите наброски и отредактируйте любимый.','Найти','напр.: ресторан, кафе, пицца, рыба, кебаб…','К наброскам','Случайный стиль','Скачать SVG','Скачать PNG','Название бренда','Слоган','Год основания (необязательно)','Значок','Загрузить своё изображение','Убрать изображение','Макет','Рамка','Шрифт','Загрузить свой шрифт (.ttf .otf .woff)','Основной цвет','Акцент','Фон','Размер значка','Межбуквенный интервал','Заглавные буквы','Прозрачный фон (при скачивании)','Текстура ручной печати (слегка неровные края)','Эмблема (текст по дуге)','Значок сверху','Значок сбоку','Монограмма','Текстовый логотип','Нет','Круг','Скруглённый блок','Кольцо','Логотип','Визитка','Вывеска','Ресторан','Кафе','Пицца','Бургер','Рыба','Кебаб и гриль','Пекарня','Суши','Мороженое','Бар и вино','Адрес вкуса','Набросок','8 набросков для «%s» — выберите один для правки.','Данные визитки','Имя и фамилия','Должность','Телефон','Эл. почта','Сайт','Адрес','Инвертировать цвета оборота','Скачать лицевую сторону (PNG)','Скачать оборот (PNG)','Вернуться к правке логотипа','Нажмите на визитку, чтобы изменить её','ул. Пример, 1']
+};
+const NK={
+'Kartviziti indir (ön + arka)':['Download card (front + back)','Visitenkarte laden (vorne + hinten)','تنزيل البطاقة (أمام + خلف)','Télécharger la carte (recto + verso)','Descargar tarjeta (anverso + reverso)','Скачать визитку (лицо + оборот)'],
+'Sosyal medya':['Social media','Soziale Medien','وسائل التواصل','Réseaux sociaux','Redes sociales','Соцсети'],
+'Önizlemeyi indir (PNG)':['Download preview (PNG)','Vorschau laden (PNG)','تنزيل المعاينة (PNG)','Télécharger l’aperçu (PNG)','Descargar vista previa (PNG)','Скачать превью (PNG)'],
+'Dışa aktar (.json)':['Export (.json)','Exportieren (.json)','تصدير (.json)','Exporter (.json)','Exportar (.json)','Экспорт (.json)'],
+'İçe aktar':['Import','Importieren','استيراد','Importer','Importar','Импорт'],
+'Dosya okunamadı.':['Could not read the file.','Datei konnte nicht gelesen werden.','تعذرت قراءة الملف.','Fichier illisible.','No se pudo leer el archivo.','Не удалось прочитать файл.'],
+'Menü başlığı':['Menu title','Menütitel','عنوان القائمة','Titre du menu','Título del menú','Заголовок меню'],
+'Menü satırları (Ad ; Fiyat ; Açıklama)':['Menu lines (Name ; Price ; Description)','Menüzeilen (Name ; Preis ; Beschreibung)','سطور القائمة (الاسم ؛ السعر ؛ الوصف)','Lignes du menu (Nom ; Prix ; Description)','Líneas del menú (Nombre ; Precio ; Descripción)','Строки меню (Название ; Цена ; Описание)'],
+'Her satır bir yemek, en fazla 6 satır. Boş bırakırsan örnek çizgiler görünür.':['One dish per line, up to 6 lines. Leave empty to see sample bars.','Ein Gericht pro Zeile, maximal 6 Zeilen. Leer lassen für Beispielbalken.','طبق واحد في كل سطر، حتى 6 أسطر. اتركه فارغًا لرؤية خطوط تجريبية.','Un plat par ligne, 6 lignes maximum. Laissez vide pour voir des barres d’exemple.','Un plato por línea, máximo 6 líneas. Déjalo vacío para ver barras de ejemplo.','Одно блюдо в строке, максимум 6 строк. Оставьте пустым, чтобы увидеть примеры.'],
+'Sosyal medya boyutları':['Social media sizes','Social-Media-Größen','أحجام وسائل التواصل','Formats réseaux sociaux','Tamaños para redes sociales','Размеры для соцсетей'],
+'Profil görseli (1080×1080) indir':['Download profile image (1080×1080)','Profilbild laden (1080×1080)','تنزيل صورة الملف (1080×1080)','Télécharger la photo de profil (1080×1080)','Descargar imagen de perfil (1080×1080)','Скачать аватар (1080×1080)'],
+'Kapak görseli (1640×624) indir':['Download cover image (1640×624)','Titelbild laden (1640×624)','تنزيل صورة الغلاف (1640×624)','Télécharger la couverture (1640×624)','Descargar portada (1640×624)','Скачать обложку (1640×624)'],
+'Hikâye görseli (1080×1920) indir':['Download story image (1080×1920)','Story-Bild laden (1080×1920)','تنزيل صورة القصة (1080×1920)','Télécharger l’image de story (1080×1920)','Descargar imagen de historia (1080×1920)','Скачать сторис (1080×1920)'],
+'QR kod ekle':['Add QR code','QR-Code hinzufügen','إضافة رمز QR','Ajouter un code QR','Añadir código QR','Добавить QR-код'],
+'QR içeriği (boşsa web sitesi)':['QR content (website if empty)','QR-Inhalt (leer = Webseite)','محتوى QR (الموقع إن كان فارغًا)','Contenu du QR (site web si vide)','Contenido del QR (sitio web si vacío)','Содержимое QR (сайт, если пусто)'],
+'Kaydet':['Save','Speichern','حفظ','Enregistrer','Guardar','Сохранить'],
+'Kaydedildi':['Saved','Gespeichert','تم الحفظ','Enregistré','Guardado','Сохранено'],
+'Kayıtlı tasarımlarım':['My saved designs','Meine gespeicherten Designs','تصاميمي المحفوظة','Mes créations enregistrées','Mis diseños guardados','Мои сохранённые дизайны'],
+'Sil':['Delete','Löschen','حذف','Supprimer','Eliminar','Удалить'],
+'Kaydedilemedi (yer dolu olabilir).':['Could not save (storage may be full).','Speichern fehlgeschlagen (Speicher evtl. voll).','تعذر الحفظ (قد تكون المساحة ممتلئة).','Échec de l’enregistrement (stockage plein ?).','No se pudo guardar (almacenamiento lleno).','Не удалось сохранить (память заполнена).'],
+'Menü':['Menu','Speisekarte','القائمة','Menu','Menú','Меню'],
+'Paket kutusu':['Takeaway box','Take-away-Box','علبة التيك أواي','Boîte à emporter','Caja para llevar','Коробка на вынос']
+};
+const LI={en:0,de:1,ar:2,fr:3,es:4,ru:5};
+const L=s=>{if(lang==='tr')return s;const i=LI[lang];if(NK[s])return NK[s][i];if(i>2){const j=K.indexOf(s);return j>=0?TY[lang][j]:s}return TX[s]?TX[s][i]:s};
+function qrSVG(t,x,y,sz){if(typeof qrcode==='undefined'||!t)return'';try{const q=qrcode(0,'M');q.addData(t);q.make();const n=q.getModuleCount(),k=sz/(n+2);let d='';for(let r=0;r<n;r++)for(let c=0;c<n;c++)if(q.isDark(r,c))d+=`M${x+(c+1)*k} ${y+(r+1)*k}h${k}v${k}h-${k}z`;return `<rect x="${x}" y="${y}" width="${sz}" height="${sz}" rx="6" fill="#fff"/><path d="${d}" fill="#111"/>`}catch(e){return''}}
+function menuView(s){const lg=render({...s,tr:true}).replace('<svg ','<svg x="120" y="10" width="160" height="160" ');let r='';for(let i=0;i<6;i++){const y=205+i*46,w=90+((i*53)%70);r+=`<rect x="50" y="${y}" width="${w}" height="9" rx="4" fill="${s.c1}"/><line x1="${50+w+10}" y1="${y+5}" x2="320" y2="${y+5}" stroke="${s.c2}" stroke-dasharray="2 5" stroke-width="2"/><rect x="326" y="${y}" width="26" height="9" rx="4" fill="${s.c1}"/><rect x="50" y="${y+16}" width="${w*1.4}" height="5" rx="2.5" fill="${s.c2}" opacity=".5"/>`}return `<div style="background:#cfc9be;padding:16px;border-radius:10px"><svg viewBox="0 0 400 500" style="background:${s.bg};border-radius:4px;box-shadow:0 8px 20px #0004;display:block;max-width:360px;margin:auto">${fontCss(s)}<rect x="14" y="14" width="372" height="472" fill="none" stroke="${s.c1}" stroke-width="2"/>${lg}<rect x="150" y="180" width="100" height="3" fill="${s.c2}"/>${r}</svg></div>`}
+function boxView(s){const lg=render({...s,tr:true}).replace('<svg ','<svg x="95" y="145" width="230" height="230" ');return `<div style="background:#cfc9be;padding:16px;border-radius:10px"><svg viewBox="0 0 420 420" style="display:block">${fontCss(s)}<ellipse cx="210" cy="400" rx="150" ry="12" fill="#0003"/><path d="M150 95Q210 10 270 95" fill="none" stroke="#555" stroke-width="4"/><polygon points="40,135 380,135 340,392 80,392" fill="${s.bg}" stroke="${s.c1}" stroke-width="3"/><path d="M125 135L140 392M295 135L280 392" stroke="${s.c1}" stroke-width="2" opacity=".2"/><rect x="28" y="92" width="364" height="46" rx="8" fill="${s.c1}"/><rect x="28" y="126" width="364" height="6" fill="${s.c2}"/>${lg}</svg></div>`}
+function menuView2(s){const it=((s.mn&&s.mn.l)||'').split('\n').map(x=>x.trim()).filter(Boolean).slice(0,6),t=(s.mn&&s.mn.t)||'';if(!it.length&&!t)return menuView(s);
+ const f=FONTS[s.font],lg=render({...s,tr:true}).replace('<svg ','<svg x="120" y="10" width="160" height="160" ');
+ let r=t?`<text x="200" y="198" text-anchor="middle" font-family="${f}" font-size="22" fill="${s.c2}" letter-spacing="3">${esc(s.up?t.toUpperCase():t)}</text>`:`<rect x="150" y="186" width="100" height="3" fill="${s.c2}"/>`;
+ it.forEach((l,i)=>{const [n,p,d]=l.split(';').map(x=>x.trim()),y=238+i*42,w=Math.min(250,(n||'').length*10.5);r+=`<text x="50" y="${y}" font-family="${f}" font-size="18" fill="${s.c1}">${esc(n||'')}</text>`+(p?`<text x="350" y="${y}" text-anchor="end" font-family="${f}" font-size="18" fill="${s.c1}">${esc(p)}</text><line x1="${58+w}" y1="${y-4}" x2="${340-p.length*10}" y2="${y-4}" stroke="${s.c2}" stroke-dasharray="2 5" stroke-width="2"/>`:'')+(d?`<text x="50" y="${y+17}" font-family="Montserrat,Arial,sans-serif" font-size="11" fill="${s.c2}">${esc(d)}</text>`:'')});
+ return `<div style="background:#cfc9be;padding:16px;border-radius:10px"><svg viewBox="0 0 400 500" style="background:${s.bg};border-radius:4px;box-shadow:0 8px 20px #0004;display:block;max-width:360px;margin:auto">${fontCss(s)}<rect x="14" y="14" width="372" height="472" fill="none" stroke="${s.c1}" stroke-width="2"/>${lg}${r}</svg></div>`}
+const SZ={pf:[1080,1080,700],cv:[1640,624,520],st:[1080,1920,820]};
+function socialSVG(s,k){const [W,H,z]=SZ[k];let o=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}">${fontCss(s)}${s.tr?'':`<rect width="${W}" height="${H}" fill="${s.bg}"/>`}`;
+ if(k==='cv'){const m=W/2;o+=`<line x1="70" y1="${H/2}" x2="${m-z/2-10}" y2="${H/2}" stroke="${s.c2}" stroke-width="3"/><line x1="${m+z/2+10}" y1="${H/2}" x2="${W-70}" y2="${H/2}" stroke="${s.c2}" stroke-width="3"/>`}
+ return o+render({...s,tr:true}).replace('<svg ',`<svg x="${(W-z)/2}" y="${(H-z)/2}" width="${z}" height="${z}" `)+'</svg>'}
+function socialView(s){const f=k=>socialSVG(s,k),sh='box-shadow:0 6px 16px #0004;overflow:hidden;flex:none;';return `<div style="background:#cfc9be;padding:16px;border-radius:10px;display:grid;gap:12px"><div style="border-radius:8px;${sh}">${f('cv')}</div><div style="display:flex;gap:12px;align-items:flex-end"><div style="width:120px;border-radius:50%;${sh}">${f('pf')}</div><div style="width:90px;border-radius:10px;${sh}">${f('st')}</div></div></div>`}
+function dlPng(svg,w,h,name,bg){try{const im=new Image();im.onload=()=>{const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');if(bg){x.fillStyle=bg;x.fillRect(0,0,w,h)}x.drawImage(im,0,0,w,h);c.toBlob(b=>dl(b,name))};im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg)}catch(e){}}
+function mock(s,v){const X=h=>h.match(/<svg[\s\S]*<\/svg>/)[0].replace('<svg ','<svg xmlns="http://www.w3.org/2000/svg" ');
+ if(v==='card'){const w=(x,y)=>x.replace('<svg ',`<svg x="0" y="${y}" width="700" height="400" `);return {svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 840"><rect width="700" height="840" fill="#cfc9be"/>${w(cardSVG(s,'f'),10)}${w(cardSVG(s,'b'),430)}</svg>`,w:1400,h:1680}}
+ if(v==='sign'){const lg=render({...s,layout:'row',frame:'none',tr:true}).replace('<svg ','<svg x="70" y="105" width="660" height="190" ').replace('viewBox="0 0 400 400"','viewBox="20 130 360 140"');return {svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">${fontCss(s)}<rect width="800" height="400" fill="#211d1a"/><rect x="60" y="100" width="680" height="200" rx="10" fill="${s.bg}" stroke="#0e0d0c" stroke-width="10"/>${lg}</svg>`,w:1600,h:800}}
+ if(v==='menu')return {svg:X(menuView2(s)),w:1200,h:1500,bg:'#cfc9be'};
+ if(v==='box')return {svg:X(boxView(s)),w:1260,h:1260,bg:'#cfc9be'};
+ return {svg:render(s),w:1200,h:1200}}
+const C6=/^#[0-9a-fA-F]{6}$/;
+function clean(d){if(!d||typeof d!=='object'||!LAY[d.layout]||!(I[d.icon]||d.img))return null;const c=k=>C6.test(d[k])?d[k]:'#000000',n=(k,a,b,df)=>{const v=parseFloat(d[k]);return isFinite(v)?Math.min(b,Math.max(a,v)):df};
+ const o={name:String(d.name||'').slice(0,60),slogan:String(d.slogan||'').slice(0,80),yr:String(d.yr||'').slice(0,6),icon:I[d.icon]?d.icon:'chef',layout:d.layout,frame:FRN[d.frame]?d.frame:'none',font:(typeof d.font==='string'&&/^[A-Za-z0-9 ]{1,40}$/.test(d.font)&&(FONTS[d.font]||(d._f&&d._f.n===d.font)))?d.font:'Montserrat',c1:c('c1'),c2:c('c2'),bg:c('bg'),is:n('is',.5,1.5,1),ls:n('ls',0,12,1),up:!!d.up,tx:!!d.tx,tr:!!d.tr};
+ if(typeof d.img==='string'&&/^data:image\/(png|jpeg|webp|gif);base64,[A-Za-z0-9+\/=]+$/.test(d.img))o.img=d.img;
+ if(d._f&&typeof d._f.d==='string'&&typeof d._f.n==='string'&&/^data:[\w\/.+-]*;base64,[A-Za-z0-9+\/=]+$/.test(d._f.d)&&/^[A-Za-z0-9]{1,40}$/.test(d._f.n))o._f={n:d._f.n,d:d._f.d};
+ const m=d.cd;if(m&&typeof m==='object'){o.cd={};for(const k of ['person','title','phone','email','web','addr','qrt'])o.cd[k]=String(m[k]||'').slice(0,100);o.cd.inv=!!m.inv;o.cd.qr=!!m.qr}
+ if(d.mn&&typeof d.mn==='object')o.mn={t:String(d.mn.t||'').slice(0,40),l:String(d.mn.l||'').slice(0,600)};return o}
+function fillMenu(){document.querySelectorAll('#menuCtl [data-mn]').forEach(el=>{el.value=S.mn[el.dataset.mn]||''})}
+function saves(){try{return JSON.parse(localStorage.getItem('logos')||'[]')}catch(e){return[]}}
+function putSaves(a){try{localStorage.setItem('logos',JSON.stringify(a));return true}catch(e){alert(L('Kaydedilemedi (yer dolu olabilir).'));return false}}
+function regFontLite(n,d){CF[n]=d;FONTS[n]=`'${n}',sans-serif`;if(!FN.includes(n))FN.push(n)}
+async function regFont(n,d){regFontLite(n,d);try{const b=atob(d.split(',')[1]),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);const f=new FontFace(n,u.buffer);await f.load();document.fonts.add(f)}catch(e){}}
+function showSaved(){const a=saves(),el=$('saved');el.innerHTML='';const h=document.createElement('h2');h.textContent=L('Kayıtlı tasarımlarım');el.appendChild(h);
+ const tb=document.createElement('div');tb.className='row';tb.style.cssText='margin-bottom:12px;max-width:360px';const bx=document.createElement('button');bx.textContent=L('Dışa aktar (.json)');bx.onclick=()=>dl(new Blob([JSON.stringify(saves())],{type:'application/json'}),'logo-tasarimlari.json');const bi=document.createElement('button');bi.textContent=L('İçe aktar');const fi=document.createElement('input');fi.type='file';fi.accept='.json,application/json';fi.hidden=true;bi.onclick=()=>fi.click();
+ fi.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const arr=JSON.parse(r.result);if(!Array.isArray(arr))throw 0;const ok=arr.map(clean).filter(Boolean);if(!ok.length)throw 0;putSaves(ok.concat(saves()).slice(0,12));showSaved()}catch(err){alert(L('Dosya okunamadı.'))}};r.readAsText(f)};
+ if(a.length)tb.append(bx);tb.append(bi,fi);el.appendChild(tb);if(!a.length)return;const g=document.createElement('div');g.className='grid';a.forEach((d,i)=>{if(d._f)regFontLite(d._f.n,d._f.d);const w=document.createElement('div');w.className='card';w.style.cssText='border:1px solid var(--line);border-radius:10px;overflow:hidden';const b=document.createElement('button');b.className='card';b.style.cssText='width:100%;border:0;border-radius:0';b.innerHTML=render(d);b.onclick=async()=>{if(d._f)await regFont(d._f.n,d._f.d);openEditor(d)};const x=document.createElement('button');x.textContent=L('Sil');x.style.cssText='width:100%;border:0;border-radius:0;border-top:1px solid var(--line)';x.onclick=()=>{const a2=saves();a2.splice(i,1);putSaves(a2);showSaved()};w.append(b,x);g.appendChild(w)});el.appendChild(g)}
+function applyLang(){const w=document.createTreeWalker(document.querySelector('.wrap'),NodeFilter.SHOW_TEXT);let n;while((n=w.nextNode())){const t=n.nodeValue.trim();if(!t)continue;if(n.__o===undefined)n.__o=t;n.nodeValue=n.nodeValue.replace(/\S[\s\S]*\S|\S/,()=>L(n.__o))}}
+function setLang(){document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';applyLang();$('q').placeholder=L('Örn: restoran, kafe, pizza, balık, kebap…');chips();search();showSaved();if(S&&!$('edit').classList.contains('hide')){build();fillCard();update()}}
+function fillCard(){document.querySelectorAll('#cardCtl [data-cd]').forEach(el=>{const v=S.cd[el.dataset.cd];if(el.type==='checkbox')el.checked=!!v;else el.value=v})}
+function openCard(){CE=true;fillCard();update()}
+function cardSVG(s,side){const c=s.cd,f=FONTS[s.font],head=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 400">${fontCss(s)}`;
+ if(side==='f')return head+`<rect width="700" height="400" fill="${s.bg}"/>`+render({...s,tr:true}).replace('<svg ','<svg x="170" y="20" width="360" height="360" ')+'</svg>';
+ const bg=c.inv?s.bg:s.c1,ink=c.inv?s.c1:s.bg,tl=(y,sz,fill,t,ff,ls)=>`<text x="50" y="${y}" font-family="${ff||'Montserrat,Arial,sans-serif'}" font-size="${sz}" letter-spacing="${ls||0}" fill="${fill}">${esc(t)}</text>`;
+ return head+`<rect width="700" height="400" fill="${bg}"/>`+tl(120,38,ink,c.person,f)+tl(152,15,s.c2,c.title.toUpperCase(),null,3)+`<rect x="50" y="176" width="70" height="3" fill="${s.c2}"/>`+tl(236,17,ink,c.phone)+tl(268,17,ink,c.email)+tl(300,17,ink,c.web)+tl(332,17,ink,c.addr)+ic(s,610,90,90,ink,s.c2)+(c.qr?qrSVG(c.qrt||c.web,545,235,110):'')+'</svg>'}
+function cardView(s){const h=['f','b'].map(x=>`<div data-card="${x}" role="button" tabindex="0" style="border-radius:8px;overflow:hidden;box-shadow:0 8px 20px #0004;cursor:pointer;${CE?'outline:2px solid var(--acc);outline-offset:3px;':''}">${cardSVG(s,x)}</div>`).join('');return `<div style="background:#cfc9be;padding:16px;border-radius:10px;display:grid;gap:14px">${h}</div><p style="margin:8px 0 0;font-size:13px;color:var(--mute)">${L('Düzenlemek için karta dokun')}</p>`}
+function png(svg,w,h,name){try{const im=new Image();im.onload=()=>{const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(im,0,0,w,h);c.toBlob(b=>dl(b,name))};im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg)}catch(e){}}
+let V='logo';
+const VN={logo:'Logo',card:'Kartvizit',sign:'Tabela',menu:'Menü',box:'Paket kutusu',social:'Sosyal medya'};
+function view(s){if(V==='card')return cardView(s);if(V==='menu')return menuView2(s);if(V==='box')return boxView(s);if(V==='social')return socialView(s);
+ if(V==='sign'){
+  const sv=render({...s,layout:'row',frame:'none'}).replace('viewBox="0 0 400 400"','viewBox="20 130 360 140"');
+  return `<div style="background:linear-gradient(#2b2623,#171412);padding:44px 14px;border-radius:10px"><div style="background:${s.bg};border:6px solid #0e0d0c;border-radius:8px;box-shadow:0 0 44px ${s.c2}77;padding:6px">${sv}</div></div>`;
+ }
+ return render(s);
+}
+function fillFonts(){$('font').innerHTML=FN.map(f=>`<option>${f}</option>`).join('');$('font').value=S.font}
+function update(){
+ if(V!=='card')CE=false;$('logoCtl').classList.toggle('hide',CE||V==='menu'||V==='social');$('menuCtl').classList.toggle('hide',V!=='menu');$('socialCtl').classList.toggle('hide',V!=='social');$('cardCtl').classList.toggle('hide',!CE);
+ $('prev').innerHTML=view(S);
+ document.querySelectorAll('#views button').forEach(b=>b.classList.toggle('on',b.dataset.v===V));
+ document.querySelectorAll('#icons button').forEach(b=>b.classList.toggle('on',b.dataset.n===S.icon));
+ document.querySelectorAll('#layout button').forEach(b=>b.classList.toggle('on',b.dataset.v===S.layout));
+ document.querySelectorAll('#frame button').forEach(b=>b.classList.toggle('on',b.dataset.v===S.frame));
+}
+['name','slogan','yr','font','c1','c2','bg'].forEach(k=>$(k).addEventListener('input',e=>{S[k]=e.target.value;update()}));
+['is','ls'].forEach(k=>$(k).addEventListener('input',e=>{S[k]=parseFloat(e.target.value);update()}));
+$('up').addEventListener('change',e=>{S.up=e.target.checked;update()});
+$('back').onclick=()=>{$('edit').classList.add('hide');$('home').classList.remove('hide');showSaved()};
+$('go').onclick=search;
+$('imgb').onclick=()=>$('imgf').click();
+$('lang').onchange=e=>{lang=e.target.value;setLang()};
+$('cboth').onclick=()=>{const m=mock(S,'card');dlPng(m.svg,m.w,m.h,(S.name||'logo')+'-kartvizit.png',m.bg)};
+$('dpng').onclick=()=>{const m=mock(S,V);dlPng(m.svg,m.w,m.h,(S.name||'logo')+(V==='logo'?'':'-'+V)+'.png',m.bg)};
+$('dsvg').onclick=()=>{const m=mock(S,V);dl(new Blob([m.svg],{type:'image/svg+xml'}),(S.name||'logo')+(V==='logo'?'':'-'+V)+'.svg')};
+$('menuCtl').addEventListener('input',e=>{const k=e.target.dataset.mn;if(!k)return;S.mn[k]=e.target.value;update()});
+$('dmk').onclick=()=>{const m=mock(S,V);dlPng(m.svg,m.w,m.h,(S.name||'logo')+'-'+V+'.png',m.bg)};
+[['sp','pf','profil',1080,1080],['sc','cv','kapak',1640,624],['ss','st','hikaye',1080,1920]].forEach(([id,k,n,w,h])=>{$(id).onclick=()=>dlPng(socialSVG(S,k),w,h,(S.name||'logo')+'-'+n+'.png')});
+$('sv').onclick=()=>{const a=saves(),d={...S,_t:Date.now()};if(CF[S.font])d._f={n:S.font,d:CF[S.font]};a.unshift(d);if(putSaves(a.slice(0,12))){const b=$('sv');b.textContent=L('Kaydedildi');setTimeout(()=>{b.textContent=L('Kaydet')},1500)}};
+$('prev').addEventListener('click',e=>{if(e.target.closest('[data-card]'))openCard()});
+$('prev').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.closest('[data-card]')){e.preventDefault();openCard()}});
+$('cardCtl').addEventListener('input',e=>{const k=e.target.dataset.cd;if(!k)return;S.cd[k]=e.target.type==='checkbox'?e.target.checked:e.target.value;update()});
+$('cf').onclick=()=>png(cardSVG(S,'f'),1400,800,'kartvizit-on.png');
+$('cbk').onclick=()=>png(cardSVG(S,'b'),1400,800,'kartvizit-arka.png');
+$('cb').onclick=()=>{CE=false;update()};
+$('tx').onchange=e=>{S.tx=e.target.checked;update()};
+$('fontb').onclick=()=>$('fontf').click();
+$('imgx').onclick=()=>{S.img=null;update()};
+$('tr').onchange=e=>{S.tr=e.target.checked;update()};
+$('imgf').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const w=im.width||300,h=im.height||300,m=Math.min(1,600/Math.max(w,h)),c=document.createElement('canvas');c.width=Math.round(w*m);c.height=Math.round(h*m);c.getContext('2d').drawImage(im,0,0,c.width,c.height);S.img=c.toDataURL('image/png');update()};im.onerror=()=>alert('Görsel okunamadı. PNG, JPG, SVG veya WEBP dene.');im.src=r.result};r.readAsDataURL(f);e.target.value=''};
+$('fontf').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=async()=>{try{const nm=f.name.replace(/\.[^.]+$/,'').replace(/[^A-Za-z0-9]/g,'')||('Font'+FN.length),bin=atob(r.result.split(',')[1]),u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);const fc=new FontFace(nm,u.buffer);await fc.load();document.fonts.add(fc);CF[nm]=r.result;FONTS[nm]=`'${nm}',sans-serif`;if(!FN.includes(nm))FN.push(nm);S.font=nm;fillFonts();update()}catch(err){alert('Yazı tipi yüklenemedi. .ttf, .otf, .woff veya .woff2 dosyası seç.')}};r.readAsDataURL(f);e.target.value=''};
+$('shuf').onclick=()=>{const r=a=>a[Math.floor(Math.random()*a.length)],p=r(PAL);Object.assign(S,{c1:p[0],c2:p[1],bg:p[2],font:r(FN),frame:r(FR),layout:r(Object.keys(LAY))});for(const k of ['font','c1','c2','bg'])$(k).value=S[k];update()};
+$('q').addEventListener('keydown',e=>{if(e.key==='Enter')search()});
+async function dl(blob,name){name=String(name).replace(/[\\/:*?"<>|]/g,'-');try{const d=window.claude?await window.claude.use('downloads'):null;if(d){await d.save({filename:name,data:blob});return}}catch(e){if(e&&e.code==='declined')return}
+ const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove()}
+
+function chips(){$('chips').innerHTML='';CATS.forEach(c=>{const b=document.createElement('button');b.textContent=L(c.l);b.onclick=()=>{$('q').value=c.k[0];search()};$('chips').appendChild(b)})}chips();
+$('q').value='Restoran';search();showSaved();
+</script>
+</body>
+</html>
